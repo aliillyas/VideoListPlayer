@@ -1,21 +1,137 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+apply plugin: 'git-repo'
+apply plugin: 'com.neenbedankt.android-apt'
+
+archivesBaseName = 'VideoListPlayer'
+
+def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
+def buildTime = new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone("UTC"))
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode version_code
+        versionName "${lib_version}"
+        buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
+        buildConfigField "String", "BUILD_TIME", "\"${buildTime}\""
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs {
+
+        release {
+            storeFile file('publish/weightWatchers.keystore')
+            storePassword "${rootProject.ext.signing_config_password}"
+            keyAlias "${rootProject.ext.signing_config_alias}"
+            keyPassword "${rootProject.ext.signing_config_password}"
+        }
+
+        debug {
+            storeFile file('publish/weightWatchers.keystore')
+            storePassword "${rootProject.ext.signing_config_password}"
+            keyAlias "${rootProject.ext.signing_config_alias}"
+            keyPassword "${rootProject.ext.signing_config_password}"
+        }
+    }
+
+    libraryVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+
+            if (outputFile != null && outputFile.name.endsWith('.aar')) {
+                output.outputFile = new File(outputFile.parent, "${archivesBaseName}-${variant.buildType.name}.aar")
+            }
+        }
+    }
+}
+
+gitPublishConfig{
+    org = "WW-Digital"
+    repo = "android-gradle-repo"
 }
 
 dependencies {
-    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId 'com.weightwatchers.videolistPlayer'
+            artifactId "${archivesBaseName}"
+            version "${lib_version}"
+
+            artifact sourceJar {
+                classifier 'sources'
+            }
+
+            artifact ("${buildDir}/outputs/aar/${archivesBaseName}-release.aar") {
+                extension = 'aar'
+            }
+
+            // http://stackoverflow.com/a/24764713
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+
+                configurations.compile.allDependencies.each {
+                    if (it.group) {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+
+                        if (it instanceof ModuleDependency) {
+                            def depExclusionsNode = dependencyNode.appendNode('exclusions')
+
+                            ((ModuleDependency) it).excludeRules.each {
+                                def exclusionNode = depExclusionsNode.appendNode('exclusion')
+                                exclusionNode.appendNode('groupId', it.group)
+                                exclusionNode.appendNode('artifactId', it.module)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://${gitPublishConfig.home}/${gitPublishConfig.org}/${gitPublishConfig.repo}/releases"
+        }
+    }
+}
+
+repositories {
+    github("${gitPublishConfig.org}", "${gitPublishConfig.repo}")
+}
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+}
+
+afterEvaluate {
+    tasks.withType(Test) {
+        testLogging {
+            showStackTraces true
+            exceptionFormat "full"
+            events "passed", "skipped", "failed", "standardOut", "standardError"
+        }
+    }
+    publish.dependsOn assembleRelease
 }

@@ -31,6 +31,7 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
     private static final boolean SHOW_LOGS = false;
 
     private static final int INACTIVE_LIST_ITEM_VISIBILITY_PERCENTS = 70;
+    private int mInactiveListItemVisibilityPercents = 0;
 
     private final Callback<ListItem> mCallback;
     private final ItemsProvider mItemsProvider;
@@ -48,9 +49,16 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
 
     public SingleListViewItemActiveCalculator(Callback<ListItem> callback, ItemsProvider itemsProvider,
                                               ItemsPositionGetter itemsPositionGetter) {
+        this(callback, itemsProvider, itemsPositionGetter, INACTIVE_LIST_ITEM_VISIBILITY_PERCENTS);
+    }
+
+    public SingleListViewItemActiveCalculator(Callback<ListItem> callback, ItemsProvider itemsProvider,
+                                              ItemsPositionGetter itemsPositionGetter,
+                                              int listVisibilityItemPercent) {
         super(itemsPositionGetter);
         mCallback = callback;
         mItemsProvider = itemsProvider;
+        mInactiveListItemVisibilityPercents = listVisibilityItemPercent;
     }
 
     /**
@@ -221,7 +229,7 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
             currentItemVisibilityPercents = VisibilityPercentsCalculator.getVisibilityPercents(currentView, listItem);
 
             if(currentItemVisibilityPercents > mostVisibleItemVisibilityPercents
-                    && currentItemVisibilityPercents > INACTIVE_LIST_ITEM_VISIBILITY_PERCENTS){
+                    && currentItemVisibilityPercents > mInactiveListItemVisibilityPercents){
 
                 mostVisibleItemVisibilityPercents = currentItemVisibilityPercents;
                 outMostVisibleItem.fillWithData(indexOfCurrentItem, currentView, listItem);
@@ -247,7 +255,7 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
             currentItemVisibilityPercents = VisibilityPercentsCalculator.getVisibilityPercents(currentView, listItem);
 
             if(currentItemVisibilityPercents > mostVisibleItemVisibilityPercents &&
-                    currentItemVisibilityPercents > INACTIVE_LIST_ITEM_VISIBILITY_PERCENTS){
+                    currentItemVisibilityPercents > mInactiveListItemVisibilityPercents){
                 mostVisibleItemVisibilityPercents = currentItemVisibilityPercents;
                 outMostVisibleItem.fillWithData(indexOfCurrentItem, currentView, listItem);
             }
@@ -330,8 +338,8 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
     }
 
     private boolean enoughPercentsForDeactivation(int visibilityPercents, int nextVisibilityPercents) {
-        return visibilityPercents < INACTIVE_LIST_ITEM_VISIBILITY_PERCENTS &&
-                nextVisibilityPercents >= INACTIVE_LIST_ITEM_VISIBILITY_PERCENTS;
+        return visibilityPercents < mInactiveListItemVisibilityPercents &&
+                nextVisibilityPercents >= mInactiveListItemVisibilityPercents;
     }
 
     @Override
