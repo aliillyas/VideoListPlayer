@@ -72,7 +72,7 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId 'com.weightwatchers.videolistPlayer'
+            groupId 'com.weightwatchers.videolistplayer'
             artifactId "${archivesBaseName}"
             version "${lib_version}"
 
@@ -112,13 +112,14 @@ publishing {
 
     repositories {
         maven {
-            url "file://${gitPublishConfig.home}/${gitPublishConfig.org}/${gitPublishConfig.repo}/releases"
+            url "s3://androidrepos/releases"
+            credentials(AwsCredentials) {
+                accessKey rootProject.ext.ww_aws_access_key
+                secretKey rootProject.ext.ww_secret_key
+            }
         }
+        mavenLocal()
     }
-}
-
-repositories {
-    github("${gitPublishConfig.org}", "${gitPublishConfig.repo}")
 }
 
 task sourceJar(type: Jar) {

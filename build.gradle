@@ -1,5 +1,7 @@
 rootProject.ext.signing_config_password = "wwWelcome1"
 rootProject.ext.signing_config_alias = "ww"
+rootProject.ext.ww_aws_access_key = hasProperty('WW_AWS_ACCESS_KEY') ? WW_AWS_ACCESS_KEY : System.getenv('WW_AWS_ACCESS_KEY')
+rootProject.ext.ww_secret_key = hasProperty('WW_SECRET_KEY') ? WW_SECRET_KEY : System.getenv('WW_SECRET_KEY')
 
 ext {
     build_number = System.getenv("BUILD_NUMBER") != null ? System.getenv("BUILD_NUMBER") : -1
@@ -28,6 +30,13 @@ allprojects {
         mavenLocal()
         maven {
             url "https://jitpack.io"
+        }
+        maven {
+            url "s3://androidrepos/releases"
+            credentials(AwsCredentials) {
+                accessKey rootProject.ext.ww_aws_access_key
+                secretKey rootProject.ext.ww_secret_key
+            }
         }
     }
 }
