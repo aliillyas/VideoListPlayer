@@ -16,6 +16,7 @@ import com.waynell.videolist.visibility.calculator.SingleListViewItemActiveCalcu
 import com.waynell.videolist.visibility.items.ListItem;
 import com.waynell.videolist.visibility.scroll.ItemsProvider;
 import com.waynell.videolist.visibility.scroll.RecyclerViewItemPositionGetter;
+import com.waynell.videolist.visibility.scroll.RecyclerViewItemViewPositionGetter;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         mCalculator = new SingleListViewItemActiveCalculator(adapter,
-                new RecyclerViewItemPositionGetter(layoutManager, mRecyclerView));
+                new RecyclerViewItemViewPositionGetter(layoutManager, mRecyclerView, R.id.video_view));
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);

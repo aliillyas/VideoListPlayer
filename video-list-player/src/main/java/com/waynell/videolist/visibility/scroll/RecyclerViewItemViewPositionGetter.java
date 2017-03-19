@@ -22,7 +22,13 @@ public class RecyclerViewItemViewPositionGetter implements ItemsPositionGetter  
 
     @Override
     public View getChildAt(int position) {
-        return mLayoutManager.getChildAt(position).findViewById(mViewId);
+        View cell = mLayoutManager.getChildAt(position);
+
+        if (cell != null) {
+            cell.findViewById(mViewId);
+        }
+
+        return null;
     }
 
     @Override
