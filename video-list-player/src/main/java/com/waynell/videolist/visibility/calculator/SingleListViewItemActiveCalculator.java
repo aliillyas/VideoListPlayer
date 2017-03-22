@@ -228,7 +228,7 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
             View currentView = itemsPositionGetter.getChildAt(indexOfCurrentView);
             currentItemVisibilityPercents = VisibilityPercentsCalculator.getVisibilityPercents(currentView, listItem);
 
-            if(currentItemVisibilityPercents > mostVisibleItemVisibilityPercents){
+            if(currentItemVisibilityPercents > mInactiveListItemVisibilityPercents){
                 mostVisibleItemVisibilityPercents = currentItemVisibilityPercents;
                 outMostVisibleItem.fillWithData(indexOfCurrentItem, currentView, listItem);
             }
@@ -251,7 +251,7 @@ public class SingleListViewItemActiveCalculator extends BaseItemsVisibilityCalcu
             View currentView = itemsPositionGetter.getChildAt(indexOfCurrentView);
             currentItemVisibilityPercents = VisibilityPercentsCalculator.getVisibilityPercents(currentView, listItem);
 
-            if(currentItemVisibilityPercents > mostVisibleItemVisibilityPercents){
+            if(currentItemVisibilityPercents > mInactiveListItemVisibilityPercents){
                 mostVisibleItemVisibilityPercents = currentItemVisibilityPercents;
                 outMostVisibleItem.fillWithData(indexOfCurrentItem, currentView, listItem);
             }
