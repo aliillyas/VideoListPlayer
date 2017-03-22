@@ -45,7 +45,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         mCalculator = new SingleListViewItemActiveCalculator(adapter,
-                new RecyclerViewItemViewPositionGetter(layoutManager, mRecyclerView, R.id.video_view));
+                new RecyclerViewItemPositionGetter(layoutManager, mRecyclerView));
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
