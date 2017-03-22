@@ -12,6 +12,7 @@ import com.waynell.videolist.demo.holder.BaseViewHolder;
 import com.waynell.videolist.demo.holder.ViewHolderFactory;
 import com.waynell.videolist.demo.model.BaseItem;
 import com.waynell.videolist.demo.util.ItemUtils;
+import com.waynell.videolist.visibility.calculator.DefaultSingleItemCalculatorCallback;
 import com.waynell.videolist.visibility.calculator.SingleListViewItemActiveCalculator;
 import com.waynell.videolist.visibility.items.ListItem;
 import com.waynell.videolist.visibility.scroll.ItemsProvider;
@@ -44,8 +45,8 @@ public class RecyclerViewActivity extends AppCompatActivity {
         final MyAdapter adapter = new MyAdapter();
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
-        mCalculator = new SingleListViewItemActiveCalculator(adapter,
-                new RecyclerViewItemPositionGetter(layoutManager, mRecyclerView));
+        mCalculator = new SingleListViewItemActiveCalculator(new DefaultSingleItemCalculatorCallback(), adapter,
+                new RecyclerViewItemPositionGetter(layoutManager, mRecyclerView), 20);
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
