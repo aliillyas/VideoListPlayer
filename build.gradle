@@ -6,7 +6,7 @@ rootProject.ext.ww_secret_key = hasProperty('WW_SECRET_KEY') ? WW_SECRET_KEY : S
 ext {
     build_number = System.getenv("BUILD_NUMBER") != null ? System.getenv("BUILD_NUMBER") : -1
     base_version = "1.0";
-    lib_version = "${base_version}.2"
+    lib_version = "${base_version}.3"
     app_version = "${base_version}.0.${build_number}"
     version_code = 1
 }
